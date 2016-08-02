@@ -1,0 +1,8 @@
+name: UsersGuilds
+version: 0.0.1
+author: Perri
+main: sk.perri.UsersGuilds.UsersGuilds
+commands:
+        ug:
+                description: default UsersGuilds command
+                usage: /ug help
