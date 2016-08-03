@@ -1,3 +1,8 @@
+/**
+ * Berte na vedomie, ze tento plugin sa este len vyvija! Tato verzia je len alpha, dost velky hovno-kod
+ * 
+ * This version is not final. Plugin is still in alpha version, so this code look like shit... :/
+*/
 package sk.perri.UsersGuilds;
 
 import org.bukkit.configuration.file.FileConfiguration;
