@@ -1,3 +1,14 @@
+/**
+ * FINAL VERSION 0.0.1 (plugin alpha) SHITTY CODE! NEW CODE IN NEW VERSION!
+ *
+ * Tento kod nie je este plna ani dokoncena verzia. Je to zadial len nacrt, taky hovno-kod preto
+ * sa mozno zda nelogicky a spravy pre sendera su kazda ina... Tento kod bodem doplnat a obnovovat
+ *
+ * This is not a final version of code. This is only alpha some a shitty-code. This code is being
+ * refreshed.
+*/
+//TODO oznamovaci system s error array
+
 package sk.perri.UsersGuilds;
 
 import org.bukkit.Bukkit;
@@ -34,7 +45,8 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
                 case "list": listGuild(sender); break;
                 case "yes": confirm(sender); break;
                 case "no": deny(sender); break;
-                case "reload": plugin.pluginReload(); break;
+                case "leave": leaveGuild(sender); break;
+                case "reload": plugin.pluginReload(sender); break;
                 case "debug": printDebug(sender); break;
             }
         }
@@ -73,7 +85,7 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
         boolean isFree = true;
         Guild tempGuild;
 
-        sender.sendMessage(ChatColor.GOLD+"[UsersGuilds] Trying invoke command \"create\"!");
+        sender.sendMessage(ChatColor.YELLOW+"[UsersGuilds] Trying invoke command \"create\"!");
 
         if(!plugin.players.isEmpty())
         {
@@ -137,7 +149,7 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
             {
                 plugin.guilds.get(guildName).remove = 1;
                 plugin.pendingRemove.put(sender.getName(), plugin.guilds.get(guildName));
-                sender.sendMessage(ChatColor.GOLD + "[UsersGuilds] Do you really remove this guild? Type /ug yes to remove this guild");
+                sender.sendMessage(ChatColor.YELLOW + "[UsersGuilds] Do you really remove this guild? Type /ug yes to remove this guild");
             }
             else
             {
@@ -182,8 +194,8 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
                         else
                         {
                             plugin.pendingInvite.put(args[1], tempGuild);
-                            pl.sendMessage(ChatColor.GOLD+"[UsersGuilds] Player "+sender.getName()+ChatColor.GOLD+
-                                    " invited you to guild "+tempGuild.name+ChatColor.GOLD+". To accept type /ug yes or /ug no to deny.");
+                            pl.sendMessage(ChatColor.YELLOW+"[UsersGuilds] Player "+sender.getName()+ChatColor.YELLOW+
+                                    " invited you to guild "+tempGuild.name+ChatColor.YELLOW+". To accept type /ug yes or /ug no to deny.");
                         }
 
                         break;
@@ -229,10 +241,10 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
                         plr = ss;
                         plugin.guildsData.set(plugin.players.get(sender.getName()).name + ".members", mem);
                         saveGuilds();
-                        sender.sendMessage(ChatColor.GOLD + "[UserGuild] Player " + ss + ChatColor.GOLD + " has been kicked from the guild!");
+                        sender.sendMessage(ChatColor.YELLOW + "[UserGuild] Player " + ss + ChatColor.YELLOW + " has been kicked from the guild!");
                         Player obet = Bukkit.getPlayer(ss);
                         if (obet != null)
-                            obet.sendMessage(ChatColor.GOLD + "[UserGuild] You has been kicked from the guild!");
+                            obet.sendMessage(ChatColor.YELLOW + "[UserGuild] You has been kicked from the guild!");
                     }
                 }
                 plugin.players.get(sender.getName()).members.remove(plr);
@@ -246,18 +258,66 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
 
     private void setGuild(CommandSender sender, String[] args)
     {
+        boolean isErr = true;
+        String plr = null;
+        if(!plugin.players.containsKey(sender.getName()))
+            sender.sendMessage(ChatColor.RED+"[UserGuild] You are not in any guild!");
+        else
+        {
+            if(plugin.players.get(sender.getName()).owner.equalsIgnoreCase(sender.getName()))
+            {
+                Player obet = Bukkit.getPlayer(args[1]);
+                if(obet != null)
+                {
+                    if(plugin.players.get(sender.getName()).members.contains(obet.getName()))
+                    {
+                        plugin.players.get(sender.getName()).owner = obet.getName();
+                        plugin.guildsData.set(plugin.players.get(sender.getName()).name+".owner", obet.getName());
+                        saveGuilds();
+                        sender.sendMessage(ChatColor.GREEN+"[UsersGuilds] You set player "+obet.getName()+ChatColor.GREEN+" as " +
+                                "new owner of the guild!");
+                        obet.sendMessage(ChatColor.GREEN+"[UsersGuilds] You are new owner of the guild!");
+                    }
+                    else
+                        sender.sendMessage(ChatColor.RED + "[UsersGuilds] This player is not member of this guild!");
+                }
+                else
+                {
+                    sender.sendMessage(ChatColor.RED + "[UsersGuilds] This player is not online!");
+                }
+            }
+            else
+            {
+                sender.sendMessage(ChatColor.RED + "[UsersGuilds] You are not owner of this guild!");
+            }
+        }
+    }
 
-
+    private void leaveGuild(CommandSender sender)
+    {
+        if(plugin.players.containsKey(sender.getName()))
+        {
+            Guild gld = plugin.players.get(sender.getName());
+            gld.members.remove(sender.getName());
+            List<String> mem = plugin.guildsData.getStringList(gld.name+".members");
+            mem.remove(sender.getName());
+            plugin.guildsData.set(gld.name+".members", mem);
+            saveGuilds();
+            plugin.players.remove(sender.getName());
+            sender.sendMessage(ChatColor.GREEN+"[UserGuild] Now you are not in any guild!");
+        }
+        else
+            sender.sendMessage(ChatColor.RED+"[UserGuild] You are not in any guild!");
     }
 
     private void infoGuild(CommandSender sender, String[] args)
     {
         Guild info = plugin.guilds.get(args[1]);
 
-        sender.sendMessage(ChatColor.GOLD+"Guild name: "+ChatColor.BLUE+info.name);
-        sender.sendMessage(ChatColor.GOLD+"Owner: "+ChatColor.BLUE+info.owner);
+        sender.sendMessage(ChatColor.YELLOW+"Guild name: "+ChatColor.BLUE+info.name);
+        sender.sendMessage(ChatColor.YELLOW+"Owner: "+ChatColor.BLUE+info.owner);
 
-        String stringMembers = ChatColor.GOLD+"Members: "+ChatColor.BLUE;
+        String stringMembers = ChatColor.YELLOW+"Members: "+ChatColor.BLUE;
         for(Object s : info.getMembers())
         {
             stringMembers += s + " ";
@@ -268,10 +328,10 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
 
     private void listGuild(CommandSender sender)
     {
-        sender.sendMessage(ChatColor.GOLD+"List of all guilds, total "+plugin.guilds.size()+" guilds:");
+        sender.sendMessage(ChatColor.YELLOW+"List of all guilds, total "+plugin.guilds.size()+" guilds:");
         for (Map.Entry<String, Guild> entry : plugin.guilds.entrySet())
         {
-            sender.sendMessage(ChatColor.GOLD+entry.getKey()+" - owner: "+entry.getValue().owner );
+            sender.sendMessage(ChatColor.YELLOW+entry.getKey()+" - owner: "+entry.getValue().owner );
         }
     }
 
@@ -318,7 +378,12 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
         plugin.guildsData.set(guildName, null);
         plugin.pendingRemove.remove(sender.getName());
         for(String ss : guild.members)
+        {
             plugin.players.remove(ss);
+            Player mem = Bukkit.getPlayer(ss);
+            if(mem != null)
+                mem.sendMessage(ChatColor.YELLOW+"[UserGuild] Your guild was removed!");
+        }
         plugin.guilds.replace(guildName, guild, null);
         plugin.guilds.remove(guildName);
 
@@ -333,9 +398,9 @@ public class UsersGuildsCommandExecutor implements CommandExecutor
             plugin.pendingInvite.remove(sender.getName());
             Player own = Bukkit.getPlayer(plugin.pendingInvite.get(sender.getName()).getOwner());
             if(own != null)
-                own.sendMessage(ChatColor.GOLD+"[UserGuild] Player "+sender.getName()+ChatColor.GOLD
+                own.sendMessage(ChatColor.YELLOW+"[UserGuild] Player "+sender.getName()+ChatColor.YELLOW
                         +" denied your invite.");
-            sender.sendMessage(ChatColor.GOLD+"[UsersGuilds] You denied the invite to guild");
+            sender.sendMessage(ChatColor.YELLOW+"[UsersGuilds] You denied the invite to guild");
             isErr = false;
         }
 

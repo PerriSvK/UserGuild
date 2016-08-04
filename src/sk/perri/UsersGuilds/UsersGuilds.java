@@ -1,10 +1,17 @@
 /**
- * Berte na vedomie, ze tento plugin sa este len vyvija! Tato verzia je len alpha, dost velky hovno-kod
- * 
- * This version is not final. Plugin is still in alpha version, so this code look like shit... :/
-*/
+ * FINAL VERSION 0.0.1 (plugin alpha) SHITTY CODE! NEW CODE IN NEW VERSION!
+ *
+ * Tento kod nie je este plna ani dokoncena verzia. Je to zadial len nacrt, taky hovno-kod preto
+ * sa mozno zda nelogicky a spravy pre sendera su kazda ina... Tento kod bodem doplnat a obnovovat
+ *
+ * This is not a final version of code. This is only alpha some a shitty-code. This code is being
+ * refreshed.
+ */
+
 package sk.perri.UsersGuilds;
 
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,11 +79,12 @@ public class UsersGuilds extends JavaPlugin
         getLogger().info("Plugin has been disabled!");
     }
 
-    public void pluginReload()
+    public void pluginReload(CommandSender sender)
     {
         this.onDisable();
         this.reloadConfig();
         this.onEnable();
+        sender.sendMessage(ChatColor.GRAY+"[UsersGuild] Plugin reloaded!");
     }
 
     private void loadGuilds()

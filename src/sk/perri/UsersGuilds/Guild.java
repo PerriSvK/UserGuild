@@ -1,3 +1,13 @@
+/**
+ * FINAL VERSION 0.0.1 (plugin alpha) SHITTY CODE! NEW CODE IN NEW VERSION!
+ *
+ * Tento kod nie je este plna ani dokoncena verzia. Je to zadial len nacrt, taky hovno-kod preto
+ * sa mozno zda nelogicky a spravy pre sendera su kazda ina... Tento kod bodem doplnat a obnovovat
+ *
+ * This is not a final version of code. This is only alpha some a shitty-code. This code is being
+ * refreshed.
+ */
+
 package sk.perri.UsersGuilds;
 
 import org.bukkit.Location;
